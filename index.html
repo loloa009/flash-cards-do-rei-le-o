@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flashcards - O Rei Leão</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #CBBDCE;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    canvas {
+      border: 2px solid #333;
+    }
+  </style>
+</head>
+<body>
+  <script>
+
+let flashcards = [];
+let cardWidth = 280;
+let cardHeight = 180;
+let spacing = 50;
+
+function setup() {
+  createCanvas(1000, 600);
+
+  let totalWidth = (cardWidth * 3) + (spacing * 2);
+  let startX = (width - totalWidth) / 2;
+
+  flashcards.push({
+    pergunta: "Qual é o nome do pai de Simba?",
+    resposta: "Mufasa",
+    x: startX,
+    y: height/2 - cardHeight/2,
+    virado: false
+  });
+
+  flashcards.push({
+    pergunta: "Qual é o famoso lema de Timão e Pumba?",
+    resposta: "Hakuna Matata",
+    x: startX + cardWidth + spacing,
+    y: height/2 - cardHeight/2,
+    virado: false
+  });
+
+  flashcards.push({
+    pergunta: "Quem é o vilão do filme O Rei Leão?",
+    resposta: "Scar",
+    x: startX + (cardWidth + spacing) * 2,
+    y: height/2 - cardHeight/2,
+    virado: false
+  });
+}
+
+function draw() {
+  background('#D6C8CD');
+
+  // Título
+  textAlign(CENTER, CENTER);
+  textSize(32);
+  fill(50);
+  text("Flashcards - O Rei Leão", width / 2, 60);
+
+  // Desenha os flashcards
+  flashcards.forEach(card => {
+    drawCard(card);
+  });
+}
+
+function drawCard(card) {
+  // Desenha o card
+  fill(card.virado ? '#DE77F0' : '#6724DF');
+  stroke(0);
+  strokeWeight(2);
+  rect(card.x, card.y, cardWidth, cardHeight, 20);
+
+  // Texto
+  fill(0);
+  noStroke();
+  textAlign(CENTER, CENTER);
+  textSize(18);
+
+  let texto = card.virado ? card.resposta : card.pergunta;
+
+  // Quebrar texto em múltiplas linhas se necessário
+  let linhas = quebrarTexto(texto, cardWidth - 40); // margem interna
+
+  let alturaTotal = linhas.length * 22; // espaço entre linhas
+  let startY = card.y + cardHeight/2 - alturaTotal/2 + 11; // posicionamento vertical
+
+  for (let i = 0; i < linhas.length; i++) {
+    text(linhas[i], card.x + cardWidth/2, startY + i * 22);
+  }
+}
+
+// Função que quebra o texto em várias linhas baseado na largura
+function quebrarTexto(txt, larguraMax) {
+  let palavras = txt.split(' ');
+  let linhas = [];
+  let linhaAtual = palavras[0];
+
+  textSize(18); // garantir tamanho consistente
+
+  for (let i = 1; i < palavras.length; i++) {
+    let testeLinha = linhaAtual + ' ' + palavras[i];
+    if (textWidth(testeLinha) < larguraMax) {
+      linhaAtual = testeLinha;
+    } else {
+      linhas.push(linhaAtual);
+      linhaAtual = palavras[i];
+    }
+  }
+  linhas.push(linhaAtual);
+  return linhas;
+}
+
+function mousePressed() {
+  flashcards.forEach(card => {
+    if (
+      mouseX > card.x &&
+      mouseX < card.x + cardWidth &&
+      mouseY > card.y &&
+      mouseY < card.y + cardHeight
+    ) {
+      card.virado = !card.virado;
+    }
+  });
+}
+
+  </script>
+</body>
+</html>
